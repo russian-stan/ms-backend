@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({path: './config.env'});
+const axios = require('axios');
 const app = require('./app');
 
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+axios.defaults.baseURL = 'https://api.themoviedb.org/3';
 
 mongoose.connect(DB, {
   useNewUrlParser: true,
