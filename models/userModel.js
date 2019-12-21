@@ -29,12 +29,13 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Passwords are not the same!'
     }
-  }
+  },
+  passwordChangedAt: Date
 });
 
 userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
-  if(!this.isModified('password')) return next();
+  if (!this.isModified('password')) return next();
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
@@ -45,9 +46,26 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+userSchema.pre('save', async function (next) {
+  // Only run this function if password was actually modified
+  if(!this.isModified('password' || this.isNew)) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+
+  next();
+});
+
 // This method is instance method, that means it's available on all user documents
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword); //--> return boolean
+};
+
+userSchema.methods.changePasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const cangedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < cangedTimestamp;
+  }
+  return false; // False means NOT changed
 };
 
 
