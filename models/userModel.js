@@ -50,9 +50,10 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('save', async function (next) {
-  // Only run this function if password was actually modified
+  // Only run this function if password was actually modified or just created
   if (!this.isModified('password' || this.isNew)) return next();
 
+  // Subtract one second to ensure that the token is always created after the password has been changed
   this.passwordChangedAt = Date.now() - 1000;
 
   next();
@@ -80,14 +81,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .digest('hex');
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
-  console.log(
-    {
-      resetToken,
-      passwordResetToken: this.passwordResetToken,
-      passwordResetExpires: this.passwordResetExpires
-    }
-  );
 
   return resetToken;
 };

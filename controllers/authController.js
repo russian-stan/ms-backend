@@ -1,6 +1,7 @@
 const User = require('./../models/userModel.js');
 const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const sendEmail = require('./../utils/email');
@@ -130,8 +131,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save({validateBeforeSave: false});
 
-    console.log('sendEmail ERROR:', err);
-
     next(new AppError('There was an error during the sending the email. Please, try again later', 500));
   }
 });
@@ -159,7 +158,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined;
   await user.save();
 
-  // 3) Update passwordChangedAt for the user
+  // 3) Update passwordChangedAt for the user - line 52 in userModel
 
   // 4) Log the user in, send JWT
   createSendToken(user, 200, res);
