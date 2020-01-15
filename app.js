@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const helmet = require('helmet');
 
 const userRouter = require('./routes/userRoutes');
 const movieRouter = require('./routes/movieRoutes.js');
@@ -11,6 +12,9 @@ const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 
 console.log(`App started in ${process.env.NODE_ENV} mode`);
+
+// Set security HTTP headers
+app.use(helmet());
 
 // Body parser, reading data from body into req.body object
 app.use(express.json({limit: '10kb'}));
