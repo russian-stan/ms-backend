@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const userRouter = require('./routes/userRoutes');
 const movieRouter = require('./routes/movieRoutes.js');
@@ -18,6 +20,12 @@ app.use(helmet());
 
 // Body parser, reading data from body into req.body object
 app.use(express.json({limit: '10kb'}));
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+// Data sanitization against XSS
+app.use(xss());
 
 app.use(cors());
 app.options('*', cors());

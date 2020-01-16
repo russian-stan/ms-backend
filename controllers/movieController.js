@@ -1,6 +1,6 @@
 const getData = require('../utils/getData');
 const catchAsync = require('./../utils/catchAsync');
-const Movie = require('./../utils/Movie.js');
+const Movie = require('../models/movieModel.js');
 
 exports.getMovies = catchAsync(async (req, res, next) => {
   const pageType = req.query.pageType;
