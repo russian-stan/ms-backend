@@ -40,7 +40,6 @@ const initPipeline = async (id) => {
 
 exports.getMovieData = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  console.log('ID', id);
   const data = await initPipeline(id);
 
   res.status(200).json({

@@ -37,6 +37,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// Test middleware
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/movies', movieRouter);
 
