@@ -29,8 +29,10 @@ app.use(mongoSanitize());
 // Data sanitization against XSS
 app.use(xss());
 
-app.use(cors());
-app.options('*', cors());
+app.use(cors({
+  origin: 'http://localhost:8080',
+  credentials: true
+}));
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
