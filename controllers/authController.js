@@ -7,12 +7,12 @@ const AppError = require('./../utils/appError');
 const sendEmail = require('./../utils/email');
 
 
-const signToken = (id, name, email) => {
-  return jwt.sign({id, name, email}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
+const signToken = (id, name) => {
+  return jwt.sign({id, name}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
 };
 
 const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id, user.name, user.email);
+  const token = signToken(user._id, user.name);
 
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
