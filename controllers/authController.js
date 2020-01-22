@@ -36,6 +36,18 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const checkToken = (req) => {
+  let token;
+
+  // Getting token an check if it actually exists
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+  return token;
+};
+
 
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
@@ -69,14 +81,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
 
-  let token;
-
-  // 1) Getting token an check if it actually exists
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
-  }
+  let token = checkToken(req);
 
   if (!token) {
     return next(new AppError('You are not logged in! Please log in to get access', 401));
@@ -99,6 +104,34 @@ exports.protect = catchAsync(async (req, res, next) => {
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser; //--> put the user's entire data on the request
   next();
+});
+
+exports.checkAuthentication = catchAsync(async (req, res, next) => {
+
+  let isAuthorized = false;
+  let token = checkToken(req);
+  let userData = {};
+
+  if(token) {
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser.changePasswordAfter(decoded.iat)) {
+      isAuthorized = true;
+      userData.name = currentUser.name;
+      userData.email = currentUser.email;
+    }
+  } else {
+    isAuthorized = false;
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      ...userData,
+      isAuthorized
+    }
+  });
 });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
