@@ -79,6 +79,16 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  console.log('Log Out!');
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 100),
+    httpOnly: true,
+    sameSite: 'none'
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
 
   let token = checkToken(req);
