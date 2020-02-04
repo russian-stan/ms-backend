@@ -1,6 +1,6 @@
-const getData = require('../utils/getData.js');
+const getData = require('./getData.js');
 
-class MovieModel {
+class MovieInfo {
   constructor() {
     this.data = {};
   }
@@ -12,22 +12,22 @@ class MovieModel {
   async getCredits(url) {
     let cast = await getData(url);
     if (cast.length > 0) cast = data.cast.slice(0, 7);
-    MovieModel.assignData(this.data, cast);
+    MovieInfo.assignData(this.data, cast);
   }
 
   async getTrailer(url) {
     let {results} = await getData(url);
-    MovieModel.assignData(this.data, {trailers: results});
+    MovieInfo.assignData(this.data, {trailers: results});
   }
 
   async getImages(url) {
     let {backdrops} = await getData(url);
-    MovieModel.assignData(this.data, {images: backdrops});
+    MovieInfo.assignData(this.data, {images: backdrops});
   }
 
   async getSimilar(url) {
     let {results} = await getData(url);
-    MovieModel.assignData(this.data, {similar: {movies: results}});
+    MovieInfo.assignData(this.data, {similar: {movies: results}});
   }
 
   parseDetails() {
@@ -46,4 +46,4 @@ class MovieModel {
   }
 }
 
-module.exports = MovieModel;
+module.exports = MovieInfo;
