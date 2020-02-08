@@ -15,6 +15,21 @@ exports.getMovies = catchAsync(async (req, res, next) => {
   })
 });
 
+exports.getSerchData = catchAsync(async (req, res, next) => {
+  const searchQuery = req.query.searchQuery;
+  const page = req.query.page;
+
+  console.log({searchQuery, page});
+
+  const url = `/search/movie?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&query=${searchQuery}&page=${page}&include_adult=true`;
+
+  const data = await getData(url);
+  res.status(200).json({
+    status: 'success',
+    data
+  })
+});
+
 const getURL = (id, url) => {
   const urls = {
     movieDataURL: `/movie/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`,
