@@ -18,9 +18,7 @@ exports.getMovies = catchAsync(async (req, res, next) => {
 exports.getSerchData = catchAsync(async (req, res, next) => {
   const searchQuery = req.query.searchQuery;
   const page = req.query.page;
-
-  console.log({searchQuery, page});
-
+  console.log({searchQuery});
   const url = `/search/movie?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&query=${searchQuery}&page=${page}&include_adult=true`;
 
   const data = await getData(url);

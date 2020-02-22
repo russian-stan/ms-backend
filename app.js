@@ -7,7 +7,8 @@ const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/userRoutes');
-const movieRouter = require('./routes/movieRoutes.js');
+const movieRouter = require('./routes/movieRoutes');
+const bookmarkRouter = require('./routes/bookmarkRoutes');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/movies', movieRouter);
+app.use('/api/v1/bookmarks', bookmarkRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find '${req.originalUrl}' on this server!`, 404));

@@ -1,4 +1,4 @@
-const User = require('./../models/userModel.js');
+const User = require('./../models/userModel');
 const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -130,6 +130,7 @@ exports.checkAuthentication = catchAsync(async (req, res, next) => {
       isAuthorized = true;
       userData.name = currentUser.name;
       userData.email = currentUser.email;
+      userData.id = currentUser._id;
     }
   } else {
     isAuthorized = false;
