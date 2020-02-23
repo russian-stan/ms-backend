@@ -9,7 +9,8 @@ router.use(authController.protect);
 router
   .route('/')
   .get(bookmarkController.getMyBookmarks)
-  .post(bookmarkController.addToFavorite)
-  .delete(bookmarkController.removeFromFavorite);
+  .post(bookmarkController.addToFavorite);
+
+router.delete('/:id', bookmarkController.removeFromFavorite);
 
 module.exports = router;
