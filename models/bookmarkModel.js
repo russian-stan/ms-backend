@@ -9,7 +9,7 @@ const bookmarkSchema = new mongoose.Schema({
     },
     id: {
       type: Number,
-      required: [true, 'Bookmark must have a movie id.'],
+      required: [true, 'Bookmark must have a movie id.']
     },
     poster_path: {
       type: String
@@ -25,6 +25,10 @@ const bookmarkSchema = new mongoose.Schema({
     },
     vote_count: {
       type: Number
+    },
+    is_favor: {
+      type: Boolean,
+      default: true
     }
   },
   {
