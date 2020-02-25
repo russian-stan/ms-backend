@@ -9,7 +9,8 @@ const bookmarkSchema = new mongoose.Schema({
     },
     id: {
       type: Number,
-      required: [true, 'Bookmark must have a movie id.']
+      required: [true, 'Bookmark must have a movie id.'],
+      unique: false
     },
     poster_path: {
       type: String
