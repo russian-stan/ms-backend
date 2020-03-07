@@ -25,7 +25,7 @@ exports.addToFavorite = catchAsync(async (req, res, next) => {
 });
 
 exports.removeFromFavorite = catchAsync(async (req, res, next) => {
-  const favList = await Bookmark.findByIdAndDelete(req.params.id);
+  await Bookmark.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
     status: 'success',

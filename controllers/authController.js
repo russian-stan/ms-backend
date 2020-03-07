@@ -1,4 +1,5 @@
 const User = require('./../models/userModel');
+const Bookmark = require('./../models/bookmarkModel');
 const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -267,6 +268,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 exports.deleteMe = catchAsync(async (req, res, next) => {
 
   await User.findByIdAndDelete(req.user.id);
+  await Bookmark.remove({user: req.user.id});
 
   res.status(204).json({
     status: 'success',
