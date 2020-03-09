@@ -28,6 +28,40 @@ exports.getSerchData = catchAsync(async (req, res, next) => {
   })
 });
 
+exports.getDiscoverData = catchAsync(async (req, res, next) => {
+
+  let actorID = '';
+
+  if (req.body.actor) {
+    const url = `/search/person?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&query=${req.body.actor}&page=1&include_adult=false&region=${req.body.country}`;
+    const data = await getData(url);
+    if (data.results.length > 0 && 'id' in data.results[0]) {
+      actorID = data.results[0].id;
+    }
+  }
+
+  const url = '/discover/movie?api_key=' + process.env.MOVIEDB_KEY +
+    '&' + process.env.MOVIEDB_LANGUAGE +
+    '&' + 'region=' + req.body.country +
+    '&' + 'sort_by=' + req.body.sort +
+    '&' + 'include_adult=true&include_video=false' +
+    '&' + 'page=' + req.body.page +
+    '&' + 'release_date.gte=' + req.body.yearFrom +
+    '&' + 'release_date.lte=' + req.body.yearTill +
+    '&' + 'vote_average.gte=' + req.body.rate +
+    '&' + 'with_genres=' + req.body.genere +
+    '&' + 'with_people=' + actorID;
+
+  console.log(url);
+
+  const data = await getData(url);
+
+  res.status(200).json({
+    status: 'success',
+    data
+  })
+});
+
 const getURL = (id, url) => {
   const urls = {
     movieDataURL: `/movie/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`,
