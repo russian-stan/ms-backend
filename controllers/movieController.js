@@ -6,7 +6,8 @@ exports.getMovies = catchAsync(async (req, res, next) => {
   const pageType = req.query.pageType;
   const page = req.query.page;
 
-  const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&page=${page}&${process.env.MOVIEDB_REGION}`;
+  const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&page=${page}`;
+  console.log(url);
 
   const data = await getData(url);
   res.status(200).json({
@@ -93,4 +94,16 @@ exports.getMovieData = catchAsync(async (req, res, next) => {
     status: 'success',
     ...data
   });
+});
+
+exports.getActorInfo = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const url = `/person/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`;
+  console.log(url);
+
+  const data = await getData(url);
+  res.status(200).json({
+    status: 'success',
+    data
+  })
 });

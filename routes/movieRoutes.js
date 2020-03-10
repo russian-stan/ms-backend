@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get('/category', movieController.getMovies);
 router.get('/movie/:id', movieController.getMovieData);
+router.get('/actor/:id', movieController.getActorInfo);
 router.get('/search', movieController.getSerchData);
 router.post('/discover', movieController.getDiscoverData);
 
