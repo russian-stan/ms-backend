@@ -19,7 +19,6 @@ exports.getMovies = catchAsync(async (req, res, next) => {
 exports.getSerchData = catchAsync(async (req, res, next) => {
   const searchQuery = req.query.searchQuery;
   const page = req.query.page;
-  console.log({searchQuery});
   const url = `/search/movie?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}&query=${searchQuery}&page=${page}&include_adult=true`;
 
   const data = await getData(url);
@@ -96,12 +95,30 @@ exports.getMovieData = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getActorInfo = catchAsync(async (req, res, next) => {
+exports.getActorData = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  const url = `/person/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`;
-  console.log(url);
 
-  const data = await getData(url);
+  const urls = {
+    actorInfo: `/person/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`,
+    actorImages: `/person/${id}/images?api_key=${process.env.MOVIEDB_KEY}`,
+    actorMovies: `/person/${id}/combined_credits?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`
+  };
+
+  const data = {};
+
+  async function processLoop() {
+    for (const item in urls) {
+      try {
+        const resp = await getData(urls[item]);
+        Object.assign(data, {[item]: resp})
+      } catch {
+        Object.assign(data, {[item]: null})
+      }
+    }
+  }
+
+  await processLoop();
+
   res.status(200).json({
     status: 'success',
     data
