@@ -99,9 +99,9 @@ exports.getActorData = catchAsync(async (req, res, next) => {
   const id = req.params.id;
 
   const urls = {
-    actorInfo: `/person/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`,
-    actorImages: `/person/${id}/images?api_key=${process.env.MOVIEDB_KEY}`,
-    actorMovies: `/person/${id}/combined_credits?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`
+    info: `/person/${id}?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`,
+    images: `/person/${id}/images?api_key=${process.env.MOVIEDB_KEY}`,
+    movies: `/person/${id}/combined_credits?api_key=${process.env.MOVIEDB_KEY}&${process.env.MOVIEDB_LANGUAGE}`
   };
 
   const data = {};
