@@ -154,14 +154,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 
   // 2) Generate the random reset token
-  const resetToken = user.createPasswordResetToken();
+  const ResetNumber = user.createPasswordResetNumber();
 
   // save needful options in current user object in DB and turn off all required validators in userSchema
   await user.save({validateBeforeSave: false});
 
   // 3) Send it to user's email
-  const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/resetPassword/${resetToken}`;
-  const message = `Forgot you password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.
+  const message = `Forgot you password? Please, submit this number: ${ResetNumber} with your new password.
   \n If you did't forget your password, please ignore this email!`;
 
   try {
@@ -176,7 +175,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message: 'Token sent to email!'
     })
   } catch (err) {
-    user.passwordResetToken = undefined;
+    user.passwordResetNumber = undefined;
     user.passwordResetExpires = undefined;
     await user.save({validateBeforeSave: false});
 
@@ -186,13 +185,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on token
-  const hashedToken = crypto
+  const hashedResetNumber = crypto
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex');
 
   const user = await User.findOne({
-    passwordResetToken: hashedToken,
+    passwordResetNumber: hashedResetNumber,
     passwordResetExpires: {$gt: Date.now()}
   });
 
@@ -203,7 +202,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken = undefined;
+  user.passwordResetNumber = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
 
