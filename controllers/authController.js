@@ -50,7 +50,7 @@ const checkToken = (req) => {
 };
 
 
-exports.signup = catchAsync(async (req, res, next) => {
+const signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -61,7 +61,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+const login = catchAsync(async (req, res, next) => {
   const {email, password} = req.body;
 
   // 1) Check if email and password exist
@@ -80,7 +80,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.logout = (req, res) => {
+const logout = (req, res) => {
   console.log('Log Out!');
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 100),
@@ -90,7 +90,7 @@ exports.logout = (req, res) => {
   res.status(200).json({ status: 'success' });
 };
 
-exports.protect = catchAsync(async (req, res, next) => {
+const protect = catchAsync(async (req, res, next) => {
 
   let token = checkToken(req);
 
@@ -117,7 +117,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.checkAuthentication = catchAsync(async (req, res, next) => {
+const checkAuthentication = catchAsync(async (req, res, next) => {
 
   let isAuthorized = false;
   let token = checkToken(req);
@@ -146,7 +146,7 @@ exports.checkAuthentication = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.forgotPassword = catchAsync(async (req, res, next) => {
+const forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user on POSTed email
   const user = await User.findOne({email: req.body.email});
   if (!user) {
@@ -183,7 +183,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {
+const resetPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on token
   const hashedResetNumber = crypto
     .createHash('sha256')
@@ -212,7 +212,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updatePassword = catchAsync(async (req, res, next) => {
+const updatePassword = catchAsync(async (req, res, next) => {
 
   // 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');
@@ -231,7 +231,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updateMe = catchAsync(async (req, res, next) => {
+const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     next(new AppError('This route is not for password updates!', 400));
@@ -264,7 +264,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
+const deleteMe = catchAsync(async (req, res, next) => {
 
   await User.findByIdAndDelete(req.user.id);
   await Bookmark.remove({user: req.user.id});
@@ -274,3 +274,17 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null
   });
 });
+
+
+module.exports = {
+  signup,
+  login,
+  logout,
+  protect,
+  checkAuthentication,
+  forgotPassword,
+  resetPassword,
+  updatePassword,
+  updateMe,
+  deleteMe
+};
