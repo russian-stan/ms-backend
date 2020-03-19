@@ -6,7 +6,7 @@ const getMovies = catchAsync(async (req, res, next) => {
   const pageType = req.query.pageType;
   const page = req.query.page;
 
-  const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&page=${page}`;
+  const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&region=${process.env.MOVIEDB_REGION}&page=${page}`;
 
   const data = await getData(url);
   res.status(200).json({
@@ -39,7 +39,8 @@ const getDiscoverData = catchAsync(async (req, res, next) => {
     }
   }
 
-  const url = '/discover/movie?api_key=' + process.env.MOVIEDB_KEY +
+  const url =
+    '/discover/movie?api_key=' + process.env.MOVIEDB_KEY +
     '&' + 'language=' + process.env.MOVIEDB_LANGUAGE +
     '&' + 'region=' + req.body.country +
     '&' + 'sort_by=' + req.body.sort +
