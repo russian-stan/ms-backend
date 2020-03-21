@@ -28,7 +28,6 @@ const getSerchData = catchAsync(async (req, res, next) => {
 });
 
 const getDiscoverData = catchAsync(async (req, res, next) => {
-
   let actorID = '';
 
   if (req.body.actor) {

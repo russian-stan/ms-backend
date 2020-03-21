@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -10,10 +11,13 @@ const userRouter = require('./routes/userRoutes');
 const movieRouter = require('./routes/movieRoutes');
 const bookmarkRouter = require('./routes/bookmarkRoutes');
 
-const AppError = require('./utils/appError');
+const AppError = require('./utils/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 console.log(`App started in ${process.env.NODE_ENV} mode`);
 

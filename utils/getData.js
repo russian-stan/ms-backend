@@ -1,5 +1,5 @@
 const axios = require('axios');
-const AppError = require('../utils/appError');
+const AppError = require('./AppError');
 
 module.exports = async (url) => {
   try {

@@ -4,8 +4,8 @@ const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
-const sendEmail = require('./../utils/email');
+const AppError = require('../utils/AppError');
+const Email = require('../utils/Email');
 
 
 const signToken = (id, name) => {
@@ -57,6 +57,8 @@ const signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm
   });
+
+  await new Email(newUser, 'http://localhost:8080').sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -160,19 +162,12 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   await user.save({validateBeforeSave: false});
 
   // 3) Send it to user's email
-  const message = `Forgot you password? Please, submit this number: ${ResetNumber} with your new password.
-  \n If you did't forget your password, please ignore this email!`;
-
   try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Your password reset token (valid for 10 min)',
-      message
-    });
+    await new Email(user, ResetNumber).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
-      message: 'Token sent to email!'
+      message: 'Reset number has been sent to email!'
     })
   } catch (err) {
     user.passwordResetNumber = undefined;
