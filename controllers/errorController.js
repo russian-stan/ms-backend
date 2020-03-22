@@ -1,4 +1,18 @@
 const AppError = require('../utils/AppError');
+const getMessage = require('../utils/dictionary.js');
+const translate = require('translate');
+
+const translateMessage = async (message) => {
+  if(process.env.APP_LANGUAGE === 'ru') {
+    return await translate(message, {
+      to: 'ru',
+      engine: process.env.TRANSLATE_ENGINE,
+      key: process.env.YANDEX_TRANSLATE_API_KEY
+    });
+  } else {
+    return message;
+  }
+};
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
@@ -11,21 +25,26 @@ const handleDuplicateFieldsDB = (err) => {
   return new AppError(message, 400);
 };
 
-const handleValidationErrorDB = (err) => {
-  const errors = Object.values(err.errors).map(el => el.message);
+const handleValidationErrorDB = async (err) => {
+  const errors = Object.values(err.errors).map(el => el.message).join('. ');
 
-  const message = `Invalid input data. ${errors.join('. ')}`;
+  const message = `${getMessage('invalidInput')}. ${await translateMessage(errors)}`;
   return new AppError(message, 400);
 };
 
 const handleJWTError = () => {
-  const message = 'Invalid token. Please log in again!';
+  const message = getMessage('invalidToken');
   return new AppError(message, 401);
 };
 
 const handleJWTExpiredError = () => {
-  const message = 'Your token has expired. Please log in again!';
+  const message = getMessage('expiredToken');
   return new AppError(message, 401);
+};
+
+const handleRequestFailError = () => {
+  const message = getMessage('abstractMessage');
+  return new AppError(message, 404);
 };
 
 const sendErrorDev = (err, res) => {
@@ -47,13 +66,12 @@ const sendErrorProd = (err, res) => {
   } else {
     res.status(500).json({
       status: 'error',
-      message: 'Something went wrong!'
+      message: getMessage('abstractMessage')
     })
   }
 };
 
-
-module.exports = (err, req, res, next) => {
+module.exports = async (err, req, res) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
@@ -64,9 +82,16 @@ module.exports = (err, req, res, next) => {
 
     if(error.name === 'CastError') error = handleCastErrorDB(error);
     if(error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if(error.name === 'ValidationError') error = handleValidationErrorDB(error);
+    if(error.name === 'ValidationError') error = await handleValidationErrorDB(error);
     if(error.name ==='JsonWebTokenError') error = handleJWTError();
     if(error.name ==='TokenExpiredError') error = handleJWTExpiredError();
+    if (error.message === 'Request failed with status code 404'
+      && process.env.APP_LANGUAGE === 'ru'
+      && process.env.NODE_ENV === 'production') {
+      error = handleRequestFailError();
+    }
+
+    console.log('ERR MESSAGE', error.message);
 
     sendErrorProd(error, res);
   }
