@@ -71,7 +71,7 @@ const sendErrorProd = (err, res) => {
   }
 };
 
-module.exports = async (err, req, res) => {
+module.exports = async (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
@@ -90,8 +90,6 @@ module.exports = async (err, req, res) => {
       && process.env.NODE_ENV === 'production') {
       error = handleRequestFailError();
     }
-
-    console.log('ERR MESSAGE', error.message);
 
     sendErrorProd(error, res);
   }
