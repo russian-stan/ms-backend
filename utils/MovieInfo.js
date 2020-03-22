@@ -2,41 +2,36 @@ const getData = require('./getData.js');
 
 class MovieInfo {
   constructor() {
-    this.data = {};
+    this.movieInfo = {};
   }
 
   async getMovieData(url) {
-    this.data = await getData(url);
+    this.movieInfo = await getData(url);
   }
 
   async getCredits(url) {
     let cast = await getData(url);
     if (cast.length > 0) cast = data.cast.slice(0, 7);
-    MovieInfo.assignData(this.data, cast);
+    MovieInfo.assignData(this.movieInfo, cast);
   }
 
   async getTrailer(url) {
     let {results} = await getData(url);
-    MovieInfo.assignData(this.data, {trailers: results});
+    MovieInfo.assignData(this.movieInfo, {trailers: results});
   }
 
   async getImages(url) {
     let {backdrops} = await getData(url);
-    MovieInfo.assignData(this.data, {images: backdrops});
-  }
-
-  async getSimilar(url) {
-    let {results} = await getData(url);
-    MovieInfo.assignData(this.data, {similar: {movies: results}});
+    MovieInfo.assignData(this.movieInfo, {images: backdrops});
   }
 
   parseDetails() {
     const features = ['production_countries', 'genres', 'crew'];
     features.forEach(feature => {
-      if (this.data[feature].length > 0) {
-        this.data[feature] = Array.from(new Set(this.data[feature].map(el => el.name))).join(`, `);
+      if (this.movieInfo[feature].length > 0) {
+        this.movieInfo[feature] = Array.from(new Set(this.movieInfo[feature].map(el => el.name))).join(`, `);
       } else {
-        this.data[feature] = null;
+        this.movieInfo[feature] = null;
       }
     });
   }

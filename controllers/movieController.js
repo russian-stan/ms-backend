@@ -5,8 +5,19 @@ const Movie = require('../utils/MovieInfo.js');
 const getMovies = catchAsync(async (req, res, next) => {
   const pageType = req.query.pageType;
   const page = req.query.page;
-
   const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&region=${process.env.MOVIEDB_REGION}&page=${page}`;
+
+  const data = await getData(url);
+  res.status(200).json({
+    status: 'success',
+    data
+  })
+});
+
+const getSimilar = catchAsync(async (req, res, next) => {
+  const id = req.query.id;
+  const page = req.query.page;
+  const url = `/movie/${id}/similar?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&page=${page}`;
 
   const data = await getData(url);
   res.status(200).json({
@@ -65,7 +76,6 @@ const getURL = (id, url) => {
     creditsURL: `/movie/${id}/credits?api_key=${process.env.MOVIEDB_KEY}`,
     trailerURL: `/movie/${id}/videos?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}`,
     imagesURL: `/movie/${id}/images?api_key=${process.env.MOVIEDB_KEY}`,
-    similarURL: `/movie/${id}/similar?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&page=1`,
   };
   return urls[url]
 };
@@ -76,7 +86,6 @@ const initPipeline = async (id) => {
   await movie.getCredits(getURL(id, 'creditsURL'));
   await movie.getTrailer(getURL(id, 'trailerURL'));
   await movie.getImages(getURL(id, 'imagesURL'));
-  await movie.getSimilar(getURL(id, 'similarURL'));
   movie.parseDetails();
 
   return movie;
@@ -88,7 +97,7 @@ const getMovieData = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    ...data
+    data
   });
 });
 
@@ -124,6 +133,7 @@ const getActorData = catchAsync(async (req, res, next) => {
 
 module.exports = {
   getMovies,
+  getSimilar,
   getSerchData,
   getDiscoverData,
   getMovieData,
