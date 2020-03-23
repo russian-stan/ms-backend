@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -27,8 +28,8 @@
     "mongoose": "^5.8.1",
     "nodemailer": "^4.7.0",
     "pug": "^2.0.4",
+    "translate": "latest",
     "validator": "^12.1.0",
-    "xss-clean": "^0.1.1",
-    "translate": "latest"
+    "xss-clean": "^0.1.1"
   }
 }

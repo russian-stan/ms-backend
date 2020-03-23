@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const userRouter = require('./routes/userRoutes');
 const movieRouter = require('./routes/movieRoutes');
@@ -43,6 +44,8 @@ app.use(cors({
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+app.use(compression());
 
 // Test middleware
 app.use((req, res, next) => {
