@@ -13,12 +13,13 @@ const signToken = (id, name) => {
   return jwt.sign({id, name}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id, user.name);
 
   const cookieOptions = {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
     httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'none'
   };
 
@@ -61,7 +62,7 @@ const signup = asyncHandler(async (req, res, next) => {
 
   await new Email(newUser, '').sendWelcome();
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 const login = asyncHandler(async (req, res, next) => {
@@ -80,7 +81,7 @@ const login = asyncHandler(async (req, res, next) => {
   }
 
   // 3) If everything is ok, send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 const logout = (req, res, next) => {
@@ -204,7 +205,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   // 3) Update passwordChangedAt for the user - line 52 in userModel
 
   // 4) Log the user in, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 const updatePassword = asyncHandler(async (req, res, next) => {
@@ -223,7 +224,7 @@ const updatePassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // 4) Log user in and send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 const updateMe = asyncHandler(async (req, res, next) => {
