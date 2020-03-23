@@ -39,12 +39,12 @@ app.use(mongoSanitize());
 app.use(xss());
 
 app.use(cors({
-  origin: 'http://localhost:8080',
+  origin: process.env.NODE_ENV !== 'production' ? 'http://localhost:8080' : 'https://msearch-app.web.app',
   credentials: true
 }));
 
 // Development logging
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
