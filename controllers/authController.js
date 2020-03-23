@@ -3,7 +3,7 @@ const Bookmark = require('./../models/bookmarkModel');
 const {promisify} = require('util');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const catchAsync = require('./../utils/catchAsync');
+const asyncHandler = require('./../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const Email = require('../utils/Email');
 const getMessage = require('../utils/dictionary.js');
@@ -51,7 +51,7 @@ const checkToken = (req) => {
 };
 
 
-const signup = catchAsync(async (req, res, next) => {
+const signup = asyncHandler(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -64,7 +64,7 @@ const signup = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 201, res);
 });
 
-const login = catchAsync(async (req, res, next) => {
+const login = asyncHandler(async (req, res, next) => {
   const {email, password} = req.body;
 
   // 1) Check if email and password exist
@@ -92,7 +92,7 @@ const logout = (req, res, next) => {
   res.status(200).json({ status: 'success' });
 };
 
-const protect = catchAsync(async (req, res, next) => {
+const protect = asyncHandler(async (req, res, next) => {
 
   let token = checkToken(req);
 
@@ -119,7 +119,7 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-const checkAuthentication = catchAsync(async (req, res, next) => {
+const checkAuthentication = asyncHandler(async (req, res, next) => {
 
   let isAuthorized = false;
   let token = checkToken(req);
@@ -148,7 +148,7 @@ const checkAuthentication = catchAsync(async (req, res, next) => {
   });
 });
 
-const forgotPassword = catchAsync(async (req, res, next) => {
+const forgotPassword = asyncHandler(async (req, res, next) => {
   // 1) Get user on POSTed email
   const user = await User.findOne({email: req.body.email});
   if (!user) {
@@ -178,7 +178,7 @@ const forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-const resetPassword = catchAsync(async (req, res, next) => {
+const resetPassword = asyncHandler(async (req, res, next) => {
   // 1) Get user based on token
   const hashedResetNumber = crypto
     .createHash('sha256')
@@ -207,7 +207,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-const updatePassword = catchAsync(async (req, res, next) => {
+const updatePassword = asyncHandler(async (req, res, next) => {
 
   // 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');
@@ -226,7 +226,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-const updateMe = catchAsync(async (req, res, next) => {
+const updateMe = asyncHandler(async (req, res, next) => {
   const filterObj = (obj, ...allowedFields) => {
     const newObj = {};
     Object.keys(obj).forEach(el => {
@@ -254,7 +254,7 @@ const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteMe = catchAsync(async (req, res, nex) => {
+const deleteMe = asyncHandler(async (req, res, nex) => {
 
   await User.findByIdAndDelete(req.user.id);
   await Bookmark.remove({user: req.user.id});

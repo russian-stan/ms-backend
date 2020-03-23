@@ -1,5 +1,5 @@
 const fetchData = require('../utils/fetchData');
-const catchAsync = require('./../utils/catchAsync');
+const asyncHandler = require('./../utils/asyncHandler');
 const Movie = require('../utils/MovieInfo.js');
 
 const sendResponse = async (res, url) => {
@@ -10,28 +10,28 @@ const sendResponse = async (res, url) => {
   });
 };
 
-const getMovies = catchAsync(async (req, res, next) => {
+const getMovies = asyncHandler(async (req, res, next) => {
   const pageType = req.query.pageType;
   const page = req.query.page;
   const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&region=${process.env.MOVIEDB_REGION}&page=${page}`;
   await sendResponse(res, url);
 });
 
-const getSimilar = catchAsync(async (req, res, next) => {
+const getSimilar = asyncHandler(async (req, res, next) => {
   const id = req.query.id;
   const page = req.query.page;
   const url = `/movie/${id}/similar?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&page=${page}`;
   await sendResponse(res, url);
 });
 
-const getSerchData = catchAsync(async (req, res, next) => {
+const getSerchData = asyncHandler(async (req, res, next) => {
   const searchQuery = req.query.searchQuery;
   const page = req.query.page;
   const url = `/search/movie?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&query=${searchQuery}&page=${page}&include_adult=true`;
   await sendResponse(res, url);
 });
 
-const getDiscoverData = catchAsync(async (req, res, next) => {
+const getDiscoverData = asyncHandler(async (req, res, next) => {
   let actorID = '';
 
   if (req.body.actor) {
@@ -79,7 +79,7 @@ const initPipeline = async (id) => {
   return movie;
 };
 
-const getMovieData = catchAsync(async (req, res, next) => {
+const getMovieData = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
   const data = await initPipeline(id);
@@ -89,7 +89,7 @@ const getMovieData = catchAsync(async (req, res, next) => {
   });
 });
 
-const getActorData = catchAsync(async (req, res, next) => {
+const getActorData = asyncHandler(async (req, res, next) => {
   const id = req.params.id;
 
   const urls = {

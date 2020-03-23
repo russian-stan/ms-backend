@@ -1,7 +1,7 @@
 const Bookmark = require('./../models/bookmarkModel');
-const catchAsync = require('./../utils/catchAsync');
+const asyncHandler = require('./../utils/asyncHandler');
 
-const getMyBookmarks = catchAsync(async (req, res, next) => {
+const getMyBookmarks = asyncHandler(async (req, res, next) => {
   const favList = await Bookmark.find({user: req.user});
 
   res.status(200).json({
@@ -10,7 +10,7 @@ const getMyBookmarks = catchAsync(async (req, res, next) => {
   });
 });
 
-const addToFavorite = catchAsync(async (req, res, next) => {
+const addToFavorite = asyncHandler(async (req, res, next) => {
 
   const newBookmark = await Bookmark.create(req.body);
 
@@ -22,7 +22,7 @@ const addToFavorite = catchAsync(async (req, res, next) => {
   });
 });
 
-const removeFromFavorite = catchAsync(async (req, res, next) => {
+const removeFromFavorite = asyncHandler(async (req, res, next) => {
   await Bookmark.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
