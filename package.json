@@ -4,7 +4,8 @@
   "description": "API (bookmarks and auth) for movie-search app based on Express.js and MongoDB",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "start:prod": "SET NODE_ENV=production&& nodemon server.js",
     "debug": "ndb server.js"
   },
@@ -31,5 +32,8 @@
     "translate": "latest",
     "validator": "^12.1.0",
     "xss-clean": "^0.1.1"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }
