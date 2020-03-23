@@ -42,11 +42,6 @@ const handleJWTExpiredError = () => {
   return new AppError(message, 401);
 };
 
-const handleRequestFailError = () => {
-  const message = getMessage('abstractMessage');
-  return new AppError(message, 404);
-};
-
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -85,11 +80,6 @@ module.exports = async (err, req, res, next) => {
     if(error.name === 'ValidationError') error = await handleValidationErrorDB(error);
     if(error.name ==='JsonWebTokenError') error = handleJWTError();
     if(error.name ==='TokenExpiredError') error = handleJWTExpiredError();
-    if (error.message === 'Request failed with status code 404'
-      && process.env.APP_LANGUAGE === 'ru'
-      && process.env.NODE_ENV === 'production') {
-      error = handleRequestFailError();
-    }
 
     sendErrorProd(error, res);
   }

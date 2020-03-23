@@ -51,7 +51,7 @@ const checkToken = (req) => {
 };
 
 
-const signup = catchAsync(async (req, res) => {
+const signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -83,7 +83,7 @@ const login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-const logout = (req, res) => {
+const logout = (req, res, next) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 100),
     httpOnly: true,
@@ -119,7 +119,7 @@ const protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-const checkAuthentication = catchAsync(async (req, res) => {
+const checkAuthentication = catchAsync(async (req, res, next) => {
 
   let isAuthorized = false;
   let token = checkToken(req);
@@ -254,7 +254,7 @@ const updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-const deleteMe = catchAsync(async (req, res) => {
+const deleteMe = catchAsync(async (req, res, nex) => {
 
   await User.findByIdAndDelete(req.user.id);
   await Bookmark.remove({user: req.user.id});

@@ -1,41 +1,34 @@
-const getData = require('../utils/getData');
+const fetchData = require('../utils/fetchData');
 const catchAsync = require('./../utils/catchAsync');
 const Movie = require('../utils/MovieInfo.js');
+
+const sendResponse = async (res, url) => {
+  const data = await fetchData(url);
+  res.status(200).json({
+    status: 'success',
+    data
+  });
+};
 
 const getMovies = catchAsync(async (req, res, next) => {
   const pageType = req.query.pageType;
   const page = req.query.page;
   const url = `/movie/${pageType}?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&region=${process.env.MOVIEDB_REGION}&page=${page}`;
-
-  const data = await getData(url);
-  res.status(200).json({
-    status: 'success',
-    data
-  })
+  await sendResponse(res, url);
 });
 
 const getSimilar = catchAsync(async (req, res, next) => {
   const id = req.query.id;
   const page = req.query.page;
   const url = `/movie/${id}/similar?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&page=${page}`;
-
-  const data = await getData(url);
-  res.status(200).json({
-    status: 'success',
-    data
-  })
+  await sendResponse(res, url);
 });
 
 const getSerchData = catchAsync(async (req, res, next) => {
   const searchQuery = req.query.searchQuery;
   const page = req.query.page;
   const url = `/search/movie?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&query=${searchQuery}&page=${page}&include_adult=true`;
-
-  const data = await getData(url);
-  res.status(200).json({
-    status: 'success',
-    data
-  })
+  await sendResponse(res, url);
 });
 
 const getDiscoverData = catchAsync(async (req, res, next) => {
@@ -43,7 +36,7 @@ const getDiscoverData = catchAsync(async (req, res, next) => {
 
   if (req.body.actor) {
     const url = `/search/person?api_key=${process.env.MOVIEDB_KEY}&language=${process.env.MOVIEDB_LANGUAGE}&query=${req.body.actor}&page=1&include_adult=false&region=${req.body.country}`;
-    const data = await getData(url);
+    const data = await fetchData(url);
     if (data.results.length > 0 && 'id' in data.results[0]) {
       actorID = data.results[0].id;
     }
@@ -62,12 +55,7 @@ const getDiscoverData = catchAsync(async (req, res, next) => {
     '&' + 'with_genres=' + req.body.genere +
     '&' + 'with_people=' + actorID;
 
-  const data = await getData(url);
-
-  res.status(200).json({
-    status: 'success',
-    data
-  })
+  await sendResponse(res, url);
 });
 
 const getURL = (id, url) => {
@@ -93,8 +81,8 @@ const initPipeline = async (id) => {
 
 const getMovieData = catchAsync(async (req, res, next) => {
   const id = req.params.id;
-  const data = await initPipeline(id);
 
+  const data = await initPipeline(id);
   res.status(200).json({
     status: 'success',
     data
@@ -115,7 +103,7 @@ const getActorData = catchAsync(async (req, res, next) => {
   async function processLoop() {
     for (const item in urls) {
       try {
-        const resp = await getData(urls[item]);
+        const resp = await fetchData(urls[item]);
         Object.assign(data, {[item]: resp})
       } catch {
         Object.assign(data, {[item]: null})

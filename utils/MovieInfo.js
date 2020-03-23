@@ -1,4 +1,4 @@
-const getData = require('./getData.js');
+const fetchData = require('./fetchData.js');
 
 class MovieInfo {
   constructor() {
@@ -6,22 +6,22 @@ class MovieInfo {
   }
 
   async getMovieData(url) {
-    this.movieInfo = await getData(url);
+    this.movieInfo = await fetchData(url);
   }
 
   async getCredits(url) {
-    let cast = await getData(url);
+    let cast = await fetchData(url);
     if (cast.length > 0) cast = data.cast.slice(0, 7);
     MovieInfo.assignData(this.movieInfo, cast);
   }
 
   async getTrailer(url) {
-    let {results} = await getData(url);
+    let {results} = await fetchData(url);
     MovieInfo.assignData(this.movieInfo, {trailers: results});
   }
 
   async getImages(url) {
-    let {backdrops} = await getData(url);
+    let {backdrops} = await fetchData(url);
     MovieInfo.assignData(this.movieInfo, {images: backdrops});
   }
 
