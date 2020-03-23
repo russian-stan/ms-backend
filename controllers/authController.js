@@ -59,7 +59,7 @@ const signup = asyncHandler(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm
   });
 
-  await new Email(newUser, 'http://localhost:8080').sendWelcome();
+  await new Email(newUser, '').sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
