@@ -40,6 +40,8 @@ app.use(xss());
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' ? 'https://msearch-app.web.app' : 'http://localhost:8080',
+  methods: ['GET','PUT','POST', 'PATCH', 'DELETE','UPDATE'],
+  allowedHeaders: ['X-Requested-With', 'X-HTTP-Method-Override', 'Content-Type', 'Accept'],
   credentials: true
 }));
 
