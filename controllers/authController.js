@@ -86,6 +86,7 @@ const logout = (req, res, next) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 100),
     httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     sameSite: 'none'
   });
   res.status(200).json({ status: 'success' });
