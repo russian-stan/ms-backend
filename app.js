@@ -39,7 +39,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 app.use(cors({
-  origin: '*',
+  origin: ['https://msearch-app.web.app', /localhost:/],
   credentials: true
 }));
 

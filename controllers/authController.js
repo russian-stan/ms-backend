@@ -23,8 +23,6 @@ const createSendToken = (user, statusCode, req, res) => {
     sameSite: 'none'
   };
 
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
   res.cookie('jwt', token, cookieOptions);
 
   // remove password from output
