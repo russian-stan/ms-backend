@@ -21,7 +21,7 @@ const dictionary = {
   },
   wrongEmail: {
     en: 'There is no user with this email address',
-    ru: 'Пользоваель с данным адресом электронной почы отсутствует'
+    ru: 'Пользоваель с данным адресом электронной почты отсутствует'
   },
   wrongCurrentPassword: {
     en: 'Your current password is wrong!',
